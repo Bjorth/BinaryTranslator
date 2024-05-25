@@ -34,20 +34,23 @@ def print_slow(text):
     print()
 
 
-def generate_matrix_effect():
+def generate_matrix_effect(binary_text):
     columns, rows = shutil.get_terminal_size()
-    binary_digits = ["0", "1"]
-    update_interval = 0.1
+    binary_digits = list(binary_text)  # Zamiana binarnego tekstu na listę znaków
+    binary_digits *= (
+        columns * rows // len(binary_digits)
+    ) + 1  # Powtarzanie tekstu binarnego, aby był dłuższy
+    update_interval = 0.05  # Szybsze odświeżanie
     positions = [0] * columns
 
     try:
         while True:
             clear_screen()
             for i in range(columns):
-                if random.random() > 0.5:
+                if random.random() > 0.85:  # Więcej kolumn zaczyna spadać
                     positions[i] = 0
                 if positions[i] < rows:
-                    char = random.choice(binary_digits)
+                    char = binary_digits[positions[i] % len(binary_digits)]
                     print(f"\033[{positions[i]};{i}H{char}", end="", flush=True)
                     positions[i] += 1
             time.sleep(update_interval)
@@ -73,7 +76,9 @@ while True:
         print_slow("\nTranslated into text:\n")
         print_slow(text_representation)
     elif choice == "3":
-        generate_matrix_effect()
+        input_text = input("Enter text to display as Matrix effect: ")
+        binary_representation = text_to_binary(input_text)
+        generate_matrix_effect(binary_representation)
     elif choice == "4":
         print("Closing the application...")
         break

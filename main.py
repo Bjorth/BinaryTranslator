@@ -1,5 +1,7 @@
 import os
 import time
+import random
+import shutil
 
 
 def text_to_binary(text):
@@ -28,14 +30,36 @@ def clear_screen():
 def print_slow(text):
     for char in text:
         print(char, end="", flush=True)
-        time.sleep(0.05)
+        time.sleep(0.03)
     print()
+
+
+def generate_matrix_effect():
+    columns, rows = shutil.get_terminal_size()
+    binary_digits = ["0", "1"]
+    update_interval = 0.1
+    positions = [0] * columns
+
+    try:
+        while True:
+            clear_screen()
+            for i in range(columns):
+                if random.random() > 0.5:
+                    positions[i] = 0
+                if positions[i] < rows:
+                    char = random.choice(binary_digits)
+                    print(f"\033[{positions[i]};{i}H{char}", end="", flush=True)
+                    positions[i] += 1
+            time.sleep(update_interval)
+    except KeyboardInterrupt:
+        clear_screen()
+        print("Matrix effect terminated.")
 
 
 while True:
     clear_screen()
     choice = input(
-        "What do you want to do?\n1. Translate text to binary\n2. Translate binary to text\n3. Exit\nChoose an option: "
+        "What do you want to do?\n1. Translate text to binary\n2. Translate binary to text\n3. Matrix effect\n4. Exit\nChoose an option: "
     )
 
     if choice == "1":
@@ -49,6 +73,8 @@ while True:
         print_slow("\nTranslated into text:\n")
         print_slow(text_representation)
     elif choice == "3":
+        generate_matrix_effect()
+    elif choice == "4":
         print("Closing the application...")
         break
     else:
